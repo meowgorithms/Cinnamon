@@ -63,6 +63,7 @@ namespace Cinnamon {
 
 		inline void Death() {
 			std::cout << "ONOOOO I DIE\n";
+
 		}
 	};
 
