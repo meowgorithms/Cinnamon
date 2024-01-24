@@ -26,7 +26,6 @@ namespace Cinnamon {
 		inline void Start() {
 
 		}
-	private:
 	};
 
 
