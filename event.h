@@ -21,10 +21,6 @@ namespace Cinnamon {
 		}
 
 		inline void operator ()(Args...args) {
-			for (auto f : MemListeners) {
-				std::invoke(f, obj, std::forward<Args>(args)...);
-			}
-
 			for (auto f : Listeners) {
 				f(args...);
 			}
@@ -35,7 +31,7 @@ namespace Cinnamon {
 
 
 	template<class ObjectClass, typename Ret, typename...Args>
-	struct Action {
+	struct Action<ObjectClass, Ret, Args...> {
 	public:
 		typedef Ret(ObjectClass::*ObjectMemFunc)(Args...);
 		

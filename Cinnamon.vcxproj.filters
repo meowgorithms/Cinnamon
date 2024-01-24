@@ -50,5 +50,14 @@
     <ClInclude Include="vector2.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="level.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="CinnamonObject.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

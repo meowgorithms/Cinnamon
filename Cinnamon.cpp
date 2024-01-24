@@ -923,6 +923,7 @@ int main2()
 */
 
 
+
 int main() {
     Cinnamon::Level level;
     Game::Instance().InitializeGame(level, 30);
@@ -930,7 +931,7 @@ int main() {
     level.gameObjects.emplace_back(&player);
     Game::Instance().activeLevel = level;
     Game::Instance().StartLevel();
-
+ 
     while (true) {
     }
 }

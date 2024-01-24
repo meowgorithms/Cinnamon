@@ -67,7 +67,7 @@ namespace Cinnamon {
 
 */
 	// ----------------------------------------------------------------
-		template<typename Duration, typename ActionRet, typename...ActionArgs>
+	template<typename Duration, typename ActionRet, typename...ActionArgs>
 	class Timer {
 	public:
 		Duration deltaTime = Duration(0);
@@ -80,7 +80,7 @@ namespace Cinnamon {
 		
 		
 		/// <param name="interval">in Duration units</param>
-		inline Timer(int interval = 1) : OnTick(obj) {
+		inline Timer(int interval = 1) {
 			this->interval = interval;
 			this->timeLeft = Duration(interval);
 			this->waitTime = Duration(interval);
@@ -131,11 +131,9 @@ namespace Cinnamon {
 		std::thread* thread = new std::thread();
 	};
 
-}
-
 
 	template<typename Duration, class ActionObjectClass, typename ActionRet, typename...ActionArgs>
-	class Timer {
+	class Timer<Duration, ActionObjectClass, ActionRet, ActionArgs...> {
 	public:
 		Duration deltaTime = Duration(0);
 		int interval;
@@ -198,4 +196,4 @@ namespace Cinnamon {
 		std::thread* thread = new std::thread();
 	};
 
-}
+};

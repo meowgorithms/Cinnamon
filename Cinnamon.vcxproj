@@ -104,6 +104,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -130,12 +132,15 @@
     <ClCompile Include="Cinnamon.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CinnamonObject.h" />
     <ClInclude Include="display.h" />
     <ClInclude Include="engine.h" />
     <ClInclude Include="event.h" />
+    <ClInclude Include="Game.h" />
     <ClInclude Include="GameObjectTemplate.h" />
     <ClInclude Include="gui.h" />
     <ClInclude Include="input.h" />
+    <ClInclude Include="level.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="timers.h" />
     <ClInclude Include="vector2.h" />
