@@ -42,20 +42,27 @@ namespace Cinnamon {
 			if (Input::KeyDown('S')) {
 				velocity += { 0, 1 };
 			}
+				
+			if (Input::KeyDown(VK_LBUTTON)) {
+				DebugLog("Left Mouse Down");
+			}
+
+			if (Input::KeyDown(VK_RBUTTON)) {
+				DebugLog("Right Mouse Down");
+			}
 
 			position += velocity * Game::Instance().deltaTimeSeconds * velScale;
 
 		}
 
 		inline void FixedUpdate() override {
-			//DebugLog(Game::Instance().deltaTimeSeconds, L"\n");
-			//DebugLog(position.x, ", ", position.y, "\n");
 		}
 
 		inline void Log(int x) {
 			DebugLog("Player Position: ", position);
 			DebugLog("Delta Time: ", Game::Instance().deltaTimeSeconds);
 			DebugLog("Fixed Delta Time: ", Game::Instance().fixedDeltaTimeSeconds);
+			
 		}
 	};
 

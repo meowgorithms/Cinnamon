@@ -1,5 +1,6 @@
 #pragma once
 #include <chrono>
+#include "utils.h"
 #include "timers.h"
 #include "level.h"
 #include "Screen.h"
@@ -61,6 +62,7 @@ namespace Cinnamon {
 		inline void Update() {
 			while (true) {
 				auto start = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch());
+				Input::PeekInput(screen);
 				for (size_t i = 0; i < activeLevel.gameObjects.size(); i++) {
 					activeLevel.gameObjects[i]->mut.lock();
 					activeLevel.gameObjects[i]->Update();
@@ -68,6 +70,7 @@ namespace Cinnamon {
 				}
 
 				Render();
+				FlushConsoleInputBuffer(screen.hIn);
 				auto end = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch());
 				deltaTime = (end - start);
 				deltaTimeSeconds = deltaTime.count() / double(MICROSECONDS_IN_SECOND);
@@ -76,8 +79,8 @@ namespace Cinnamon {
 
 		inline void FixedUpdate() {
 			fixedUpdateThread = std::thread([&, this]() {
-				auto stopwatch = Stopwatch<std::chrono::microseconds>();
-				auto fdtWatch = Stopwatch<std::chrono::microseconds>();
+				auto stopwatch = Stopwatch();
+				auto fdtWatch = Stopwatch();
 				LogStopwatch.Start();
 				while (true) {
 					stopwatch.Start();
@@ -122,6 +125,8 @@ namespace Cinnamon {
 		inline void Log() {
 			DebugLog("DeltaTime: ", deltaTime);
 			DebugLog("FixedDeltaTime: ", measuredFixedDeltaTime);
+			COORD coord;
+			DebugLog("Mouse Position", Input::GetMousePosition(Game::Instance().screen));
 		}
 
 	private:

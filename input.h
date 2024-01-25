@@ -1,24 +1,50 @@
 #pragma once
-
 #include <iostream>
 #include <Windows.h>
+#include "Screen.h"
+#include "utils.h"
+#include "Debug.h"
 
 
 namespace Cinnamon {
 	
-	static class Input {
-	public:
-
-        // KeyCode -> VK codes
-		inline static bool KeyDown(int KeyCode) {
+    static class Input {
+    public:
+        inline static DWORD eventsRead;
+        inline static INPUT_RECORD irec;
+        
+        inline static bool KeyDown(int KeyCode) {
             if (GetKeyState(KeyCode) & 0x8000)
                 return true;
             return false;
-		}
+        }
 
-	protected:
-	private:
-	};
+        inline static COORD GetMousePosition(Screen& screen) {
+            if (irec.Event.MouseEvent.dwEventFlags == 1) {
+                mousePos = irec.Event.MouseEvent.dwMousePosition;
+                prevMousePos = mousePos;
+            }
+            else
+                mousePos = prevMousePos;
+            return mousePos;
+        }
+
+        inline static void PeekInput(Screen& screen) {
+            PeekConsoleInput(screen.hIn, &irec, 1, &eventsRead);
+        }
+
+    protected:
+        inline static bool leftMouseDown = false;
+        inline static bool leftMouseUp = false;
+        inline static bool leftMousePressed = false;
+        inline static bool rightMouseDown = false;
+        inline static bool rightMouseUp = false;
+        inline static bool rightMousePressed = false;
+
+    private:
+        inline static COORD prevMousePos;
+        inline static COORD mousePos;
+    };
 }
 
 
