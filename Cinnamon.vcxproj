@@ -132,8 +132,14 @@
     <ClCompile Include="Cinnamon.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="CinnamonObject.h" />
-    <ClInclude Include="display.h" />
+    <ClInclude Include="Debug.h" />
+    <ClInclude Include="Empty.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Screen.h" />
     <ClInclude Include="engine.h" />
     <ClInclude Include="event.h" />
     <ClInclude Include="Game.h" />

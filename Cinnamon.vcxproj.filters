@@ -32,7 +32,7 @@
     <ClInclude Include="engine.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="display.h">
+    <ClInclude Include="Screen.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="event.h">
@@ -58,6 +58,15 @@
     </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Debug.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Empty.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

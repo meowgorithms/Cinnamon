@@ -1,5 +1,6 @@
 #include "engine.h"
 #include "Player.h";
+#include "Empty.hpp"
 using namespace Cinnamon;
 
 //------------------------------------------ TODO ----------------------------------------------
@@ -924,14 +925,32 @@ int main2()
 
 
 
+
 int main() {
-    Cinnamon::Level level;
-    Game::Instance().InitializeGame(level, 30);
-    Player player;
-    level.gameObjects.emplace_back(&player);
-    Game::Instance().activeLevel = level;
-    Game::Instance().StartLevel();
- 
-    while (true) {
+    
+    auto level = new Level();
+    level->size = { 120, 30 };
+    for (int x = 0; x < level->size.X - 1; x++)
+    {
+        for (int y = 0; y < level->size.Y - 1; y++)
+        {
+            auto e = new Empty();
+            e->position = { double(x), double(y) };
+            level->gameObjects.emplace_back(e);
+        }
     }
+
+	auto player = new Player();
+    player->position = { 30, 5 };
+    player->layer = 0;
+    level->gameObjects.emplace_back(player);
+
+	    Game::Instance().InitializeGame(level, 30);
+    DebugLog("Level size: ", Game::Instance().activeLevel.gameObjects.size());
+    for (size_t i = 0; i < Game::Instance().activeLevel.gameObjects.size(); i++) {
+        DebugLog("Position: ", Game::Instance().activeLevel.gameObjects[i]->position);
+    }
+
+    
+    Game::Instance().StartLevel();
 }

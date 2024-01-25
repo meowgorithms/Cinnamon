@@ -7,75 +7,55 @@ namespace Cinnamon {
 
 	class Player : public GameObject {
 	public:
-		
-		std::mutex mut;
 
 		int health = 100;
-
-		Vector2 velocity { 0, 0 };
-		double velScale = 10;
-		Timer<std::chrono::seconds, Player, void> logTimer;
-
-
+		Vector2 velocity;
+		double velScale = 2.;
 		Action<Player, void> OnDeath = Action<Player, void>(*this);
 		
 
-		inline Player() : GameObject(), logTimer(*this, 1) {
-			logTimer.OnTick += &Player::LogVelocity;
-			OnDeath += &Player::LogVelocity;
+		inline Player() : GameObject() {
+			displayChar = L'O';	
 		}
 
 		inline void Start() override {
-			logTimer.Start(1);
 		}
 
 		inline void Update() override {
-			mut.lock();
 			if (health < 100) {
 				OnDeath();
 			}
-			velocity += 1;
-			mut.unlock();
-		}
+			velocity = { 0, 0 };
 
-		inline void FixedUpdate() override {
-			mut.lock();
 			if (Input::KeyDown('W')) {
-				velocity = { 0 , 1 };
+				velocity += { 0 , -1 };
 			}
 
 			if (Input::KeyDown('A')) {
-				velocity = { -1, 0 };
+				velocity += { -1, 0 };
 			}
 
 			if (Input::KeyDown('D')) {
-				velocity = { 1, 0 };
+				velocity += { 1, 0 };
 			}
 
 			if (Input::KeyDown('S')) {
-				velocity = { 0, -1 };
+				velocity += { 0, 1 };
 			}
 
-			if (position.x < -100) {
-				health -= Game::Instance().fixedDeltaTimeSeconds;
-			}
-			position += velocity * Game::Instance().fixedDeltaTimeSeconds * velScale;
-			mut.unlock();
+			position += velocity * Game::Instance().deltaTimeSeconds * velScale;
+
 		}
 
-		inline void LogVelocity() {
-			mut.lock();
-			std::cout << "Velocity: (" << velocity.x << ", " << velocity.y << ")\n";
-			std::cout << "Position: (" << position.x << ", " << position.y << ")\n";
-			std::cout << "Player health: " << health << "\n";
-			std::cout << "dt: " << Game::Instance().deltaTimeSeconds << "\n";
-			std::cout << "fdt: " << Game::Instance().fixedDeltaTimeSeconds << "\n";
-			mut.unlock();
+		inline void FixedUpdate() override {
+			//DebugLog(Game::Instance().deltaTimeSeconds, L"\n");
+			//DebugLog(position.x, ", ", position.y, "\n");
 		}
 
-		inline void Death() {
-			std::cout << "ONOOOO I DIE\n";
-
+		inline void Log(int x) {
+			DebugLog("Player Position: ", position);
+			DebugLog("Delta Time: ", Game::Instance().deltaTimeSeconds);
+			DebugLog("Fixed Delta Time: ", Game::Instance().fixedDeltaTimeSeconds);
 		}
 	};
 

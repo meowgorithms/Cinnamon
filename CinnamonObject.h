@@ -2,13 +2,15 @@
 #include "vector2.h"
 #include <Windows.h>
 #include <math.h>
+#include <mutex>
 
 namespace Cinnamon {
 	class GameObject {
 	public:
+		std::mutex mut;
 		Vector2	position;
-		int		layer;
-
+		int layer = 0;
+		wchar_t displayChar = L' ';
 
 		inline GameObject()
 			: position{ 0, 0 },
@@ -32,7 +34,7 @@ namespace Cinnamon {
 		inline virtual ~GameObject() = default;
 
 
-		COORD WorldPosition() {
+		COORD GetWorldPosition() {
 			return { SHORT(floor(position.x)), SHORT(floor(position.y)) };
 		}
 	};

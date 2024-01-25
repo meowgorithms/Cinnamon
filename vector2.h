@@ -1,5 +1,5 @@
 #pragma once
-
+#include <iostream>
 namespace Cinnamon {
 	struct Vector2 {
 	public:
@@ -19,10 +19,18 @@ namespace Cinnamon {
 			this->y += d;
 		}
 
-		inline Vector2& operator * (double d) {
-			this->x *= d;
-			this->y *= d;
-			return *this;
+		inline Vector2 operator * (double d) {
+			return Vector2 { x * d, y * d };
+		}
+
+		inline friend std::ostream& operator <<(std::ostream& os, Vector2 v) {
+			os << "(" << v.x << ", " << v.y << ")";
+			return os;
+		}
+
+		inline friend std::wstringstream& operator <<(std::wstringstream& ws, Vector2 v) {
+			ws << "(" << v.x << ", " << v.y << ")";
+			return ws;
 		}
 	};
 }
