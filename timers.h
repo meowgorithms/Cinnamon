@@ -9,11 +9,11 @@
 namespace Cinnamon {
 	
 	// Where T is std::chrono::seconds, milliseconds, etc.
-	template<typename T = std::chrono::milliseconds>
+	template<typename T = std::chrono::microseconds>
 	class Stopwatch {
 	public:
-		std::chrono::high_resolution_clock clock;
-		std::chrono::high_resolution_clock::time_point start;
+		std::chrono::steady_clock clock;
+		std::chrono::steady_clock::time_point start;
 
 		inline void Start() {
 			start = clock.now();
@@ -24,7 +24,7 @@ namespace Cinnamon {
 		}
 
 		inline void Reset() {
-			clock.start = std::chrono::high_resolution_clock::time_point();
+			clock.start = std::chrono::steady_clock::time_point();
 		}
 	};
 };

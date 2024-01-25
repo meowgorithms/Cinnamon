@@ -945,12 +945,11 @@ int main() {
     player->layer = 0;
     level->gameObjects.emplace_back(player);
 
-	    Game::Instance().InitializeGame(level, 30);
+	    Game::Instance().InitializeGame(level);
     DebugLog("Level size: ", Game::Instance().activeLevel.gameObjects.size());
     for (size_t i = 0; i < Game::Instance().activeLevel.gameObjects.size(); i++) {
         DebugLog("Position: ", Game::Instance().activeLevel.gameObjects[i]->position);
     }
-
     
     Game::Instance().StartLevel();
 }

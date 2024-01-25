@@ -27,14 +27,16 @@ namespace Cinnamon {
 		std::thread fixedUpdateThread;
 		double fixedDeltaTimeMicroseconds = double(SIXTY_TICKS_PER_SECOND);
 		double fixedDeltaTimeSeconds{ fixedDeltaTimeMicroseconds / double(MICROSECONDS_IN_SECOND) };
-		Stopwatch<std::chrono::microseconds> stopwatch;
+		std::chrono::microseconds measuredFixedDeltaTime{ 0 };
+
+		Stopwatch<std::chrono::microseconds> LogStopwatch;
 
 		inline static Game& Instance() {
 			static Game game;
 			return game;
 		}
 
-		inline void InitializeGame(Cinnamon::Level* activeLevel, int fixedDeltaTime) {
+		inline void InitializeGame(Cinnamon::Level* activeLevel, int fixedDeltaTime = SIXTY_TICKS_PER_SECOND) {
 			Game::Instance().activeLevel = *activeLevel;
 			Game::Instance().fixedDeltaTime = std::chrono::microseconds(fixedDeltaTime);
 			Game::Instance().fixedDeltaTimeMicroseconds = fixedDeltaTime;
@@ -42,7 +44,7 @@ namespace Cinnamon {
 			Game::Instance().InitializeLevel();
 		}
 
-		inline void InitializeGame(Cinnamon::Level& activeLevel, int fixedDeltaTime) {
+		inline void InitializeGame(Cinnamon::Level& activeLevel, int fixedDeltaTime = SIXTY_TICKS_PER_SECOND) {
 			Game::Instance().activeLevel = activeLevel;
 			Game::Instance().fixedDeltaTime = std::chrono::microseconds(fixedDeltaTime);
 			Game::Instance().fixedDeltaTimeMicroseconds = fixedDeltaTime;
@@ -74,14 +76,29 @@ namespace Cinnamon {
 
 		inline void FixedUpdate() {
 			fixedUpdateThread = std::thread([&, this]() {
-				stopwatch.Start();
-				for (size_t i = 0; i < activeLevel.gameObjects.size(); i++) {
-					activeLevel.gameObjects[i]->mut.lock();
-					activeLevel.gameObjects[i]->FixedUpdate();
-					activeLevel.gameObjects[i]->mut.unlock();
+				auto stopwatch = Stopwatch<std::chrono::microseconds>();
+				auto fdtWatch = Stopwatch<std::chrono::microseconds>();
+				LogStopwatch.Start();
+				while (true) {
+					stopwatch.Start();
+					fdtWatch.Start();
+					for (size_t i = 0; i < activeLevel.gameObjects.size(); i++) {
+						activeLevel.gameObjects[i]->mut.lock();
+						activeLevel.gameObjects[i]->FixedUpdate();
+						activeLevel.gameObjects[i]->mut.unlock();
+					}
+					if (LogStopwatch.Lap().count() >= MICROSECONDS_IN_SECOND) {
+						Log();
+						LogStopwatch.Start();
+					}
+	
+					auto fdt = stopwatch.Lap();
+					auto until = stopwatch.clock.now() + fixedDeltaTime - fdt;
+					
+					while (stopwatch.clock.now() < until) {} // Necessary to acheive consistent time, do NOT use sleep_for or sleep_until
+					measuredFixedDeltaTime = fdtWatch.Lap();
+
 				}
-				auto fdt = stopwatch.Lap();
-				std::this_thread::sleep_for(std::chrono::microseconds(int(fixedDeltaTimeMicroseconds)) - fdt);
 			});
 		}
 
@@ -100,6 +117,11 @@ namespace Cinnamon {
 			// Anything on layer 0 gets put in the display buffer at its world position to screen position location
 			activeCamera.Capture(screen, activeLevel);
 			RenderScreen(screen);
+		}
+
+		inline void Log() {
+			DebugLog("DeltaTime: ", deltaTime);
+			DebugLog("FixedDeltaTime: ", measuredFixedDeltaTime);
 		}
 
 	private:
