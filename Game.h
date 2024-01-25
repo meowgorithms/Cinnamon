@@ -7,6 +7,9 @@
 #include "Camera.h"
 #include "Debug.h"
 
+#define SIXTY_TICKS_PER_SECOND 16'666
+#define MICROSECONDS_IN_SECOND 1'000'000
+
 namespace Cinnamon {
 	class Game {
 	public:
@@ -16,15 +19,14 @@ namespace Cinnamon {
 		Screen screen;
 		Camera activeCamera;
 
-		// This is in milliseconds
 		std::chrono::microseconds deltaTime { 0 };
-		std::chrono::microseconds fixedDeltaTime { 16'666 };
+		std::chrono::microseconds fixedDeltaTime { SIXTY_TICKS_PER_SECOND };
 
 		double deltaTimeSeconds{ 0 };
 
 		std::thread fixedUpdateThread;
-		double fixedDeltaTimeMicroseconds = 16'666.;
-		double fixedDeltaTimeSeconds { fixedDeltaTimeMicroseconds / 1'000'000. };
+		double fixedDeltaTimeMicroseconds = double(SIXTY_TICKS_PER_SECOND);
+		double fixedDeltaTimeSeconds{ fixedDeltaTimeMicroseconds / double(MICROSECONDS_IN_SECOND) };
 		Stopwatch<std::chrono::microseconds> stopwatch;
 
 		inline static Game& Instance() {
@@ -36,7 +38,7 @@ namespace Cinnamon {
 			Game::Instance().activeLevel = *activeLevel;
 			Game::Instance().fixedDeltaTime = std::chrono::microseconds(fixedDeltaTime);
 			Game::Instance().fixedDeltaTimeMicroseconds = fixedDeltaTime;
-			Game::Instance().fixedDeltaTimeSeconds = fixedDeltaTime / 16'666.;
+			Game::Instance().fixedDeltaTimeSeconds = fixedDeltaTime / double(MICROSECONDS_IN_SECOND);
 			Game::Instance().InitializeLevel();
 		}
 
@@ -44,7 +46,7 @@ namespace Cinnamon {
 			Game::Instance().activeLevel = activeLevel;
 			Game::Instance().fixedDeltaTime = std::chrono::microseconds(fixedDeltaTime);
 			Game::Instance().fixedDeltaTimeMicroseconds = fixedDeltaTime;
-			Game::Instance().fixedDeltaTimeSeconds = fixedDeltaTime / 16'666.;
+			Game::Instance().fixedDeltaTimeSeconds = fixedDeltaTime / double(MICROSECONDS_IN_SECOND);
 			Game::Instance().InitializeLevel();
 		}
 
@@ -66,7 +68,7 @@ namespace Cinnamon {
 				Render();
 				auto end = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch());
 				deltaTime = (end - start);
-				deltaTimeSeconds = deltaTime.count() / 1'000'000.;
+				deltaTimeSeconds = deltaTime.count() / double(MICROSECONDS_IN_SECOND);
 			}
 		}
 
