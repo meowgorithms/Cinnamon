@@ -4,18 +4,28 @@
 #include "Screen.h"
 #include "utils.h"
 #include "Debug.h"
+#include "CinnamonObject.h"
 
-
+// TODO: fix mouse button input
 namespace Cinnamon {
-	
     static class Input {
     public:
         inline static DWORD eventsRead;
         inline static INPUT_RECORD irec;
-        
+
+
         inline static bool KeyDown(int KeyCode) {
+            if (KeyCode == VK_LBUTTON) {
+                return leftMousePressed;
+            }
+
+            if (KeyCode == VK_RBUTTON) {
+                return rightMousePressed;
+            }
+
             if (GetKeyState(KeyCode) & 0x8000)
                 return true;
+
             return false;
         }
 
@@ -28,17 +38,74 @@ namespace Cinnamon {
                 mousePos = prevMousePos;
             return mousePos;
         }
-
+        
         inline static void PeekInput(Screen& screen) {
             PeekConsoleInput(screen.hIn, &irec, 1, &eventsRead);
         }
+        
+        inline static void Update() {
+            leftMouseDown = false;
+            rightMouseDown = false;
+
+            // Left mouse down
+            if ((GetKeyState(VK_LBUTTON) & 0x8000) && !leftMousePressed) {
+                //DebugLog("Left Mouse Pressed Down");
+                leftMousePressed = true;
+                leftMouseDown = true;
+                leftMouseUp = false;
+            }
+            
+            // Left mouse up
+            if (!(GetKeyState(VK_LBUTTON) & 0x8000) && leftMousePressed) {
+                //DebugLog("Left Mouse Lifted");
+                leftMousePressed = false;
+                leftMouseDown = false;
+                leftMouseUp = true;
+            }
+
+            // Right mouse down
+            if ((GetKeyState(VK_RBUTTON) & 0x8000) && !rightMousePressed) {
+                rightMouseDown = true;
+                rightMouseUp = false;
+                rightMousePressed = true;
+            }
+            
+            // Right mouse up
+			if (!(GetKeyState(VK_RBUTTON) & 0x8000) && rightMousePressed) {
+                rightMouseUp = true;
+                rightMouseDown = false;
+                rightMousePressed = false;
+            }
+        }
+
+        // Did the left mouse button transition from up to down this frame
+        inline static bool GetleftMouseDown() {
+            return leftMouseDown;
+        }
+
+        // Is the left mouse button down this frame
+        inline static bool GetLeftMousePressed() {
+            return leftMousePressed;
+        }
+
+        // Did the left mouse button transition from down to up this frame
+        inline static bool GetLeftMouseUp() {
+            return leftMouseUp;
+        }
+
+		// Did the right mouse button transition from up to down this frame
+        inline static bool GetRightMouseDown() {
+            return rightMouseDown;
+        }
+
 
     protected:
         inline static bool leftMouseDown = false;
-        inline static bool leftMouseUp = false;
+        inline static bool leftMouseUp = true;
         inline static bool leftMousePressed = false;
+
         inline static bool rightMouseDown = false;
-        inline static bool rightMouseUp = false;
+        inline static bool rightMouseUp = true;
         inline static bool rightMousePressed = false;
 
     private:
@@ -47,85 +114,6 @@ namespace Cinnamon {
     };
 }
 
-
-
-/*
-void HandleInput(double deltaTime)
-    {
         // Gotta use VK KeyState in order to not drop inputs,
         // Gotta use irec to get the mouse coordinates in screen space
         // & 0x8000 just checks that the button is down, mouseDown keeps it from spamming
-        COORD worldMousePos = GetWorldMousePosition();
-        if ((GetKeyState(VK_LBUTTON) & 0x8000) && !mouseDown)
-        {
-            mouseDown = true;
-
-            bool outOfBounds = worldMap->OutOfBounds(worldMousePos);
-            WorldObject* wo;
-            IAmInteractable* interactable;
-
-
-            if (!outOfBounds)
-            {
-                wo = (worldMap->map[worldMap->CoordToIndex(worldMousePos)]);
-                interactable = dynamic_cast<IAmInteractable*>(wo);
-
-                if (interactable != nullptr && PositionInCharacterProximity(worldMousePos))
-                {
-                    interactable->OnInteract();
-                }
-            }
-        }
-
-	    if ((GetKeyState(VK_RBUTTON) & 0x8000) && !rMouseDown)
-        {
-           rMouseDown = true;
-
-           bool outOfBounds = worldMap->OutOfBounds(worldMousePos);
-           
-        }
-
-        if (!(GetKeyState(VK_LBUTTON) & 0x8000) && mouseDown)
-            mouseDown = false;
-        if (!(GetKeyState(VK_RBUTTON) & 0x8000) && rMouseDown)
-            rMouseDown = false;
-        
-        double newPos[2]{ character->GetPosition()[0], character->GetPosition()[1] };
-        // UP W
-        if (GetKeyState('W') & 0x8000)
-        {
-            newPos[1] = newPos[1] - character->velocity * deltaTime;
-        }
-        // DOWN S
-        if (GetKeyState('S') & 0x8000)
-        {
-            newPos[1] = newPos[1] + character->velocity * deltaTime;
-        }
-        // RIGHT D
-        if (GetKeyState('D') & 0x8000)
-        {
-            newPos[0] = newPos[0] + character->velocity * deltaTime;
-        }
-        // LEFT A
-        if (GetKeyState('A') & 0x8000)
-        {
-            newPos[0] = newPos[0] - character->velocity * deltaTime;
-        }
-        
-        COORD maybeNewWorldPos{ SHORT(floor(newPos[0])), SHORT(floor(newPos[1])) };
-
-        bool outOfBounds = worldMap->OutOfBounds(maybeNewWorldPos);
-
-        if (outOfBounds)
-        {
-            return;
-        }
-        else if (worldMap->map[worldMap->CoordToIndex(maybeNewWorldPos)]->bCollision)
-        {
-            return;
-        }
-        else
-            character->SetPosition(newPos);
-
-    }
-*/

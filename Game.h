@@ -62,6 +62,7 @@ namespace Cinnamon {
 		inline void Update() {
 			while (true) {
 				auto start = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch());
+				Input::Update();
 				Input::PeekInput(screen);
 				for (size_t i = 0; i < activeLevel.gameObjects.size(); i++) {
 					activeLevel.gameObjects[i]->mut.lock();
@@ -90,11 +91,12 @@ namespace Cinnamon {
 						activeLevel.gameObjects[i]->FixedUpdate();
 						activeLevel.gameObjects[i]->mut.unlock();
 					}
+
 					if (LogStopwatch.Lap().count() >= MICROSECONDS_IN_SECOND) {
 						Log();
 						LogStopwatch.Start();
 					}
-	
+
 					auto fdt = stopwatch.Lap();
 					auto until = stopwatch.clock.now() + fixedDeltaTime - fdt;
 					
@@ -123,10 +125,12 @@ namespace Cinnamon {
 		}
 
 		inline void Log() {
-			DebugLog("DeltaTime: ", deltaTime);
-			DebugLog("FixedDeltaTime: ", measuredFixedDeltaTime);
-			COORD coord;
-			DebugLog("Mouse Position", Input::GetMousePosition(Game::Instance().screen));
+			//DebugLog("DeltaTime: ", deltaTime);
+			//DebugLog("FixedDeltaTime: ", measuredFixedDeltaTime);
+			//DebugLog("Mouse Position", Input::GetMousePosition(Game::Instance().screen));
+			//DebugLog("LB_DOWN: ", Input::GetleftMouseDown());
+			//DebugLog("LB_UP: ", Input::GetLeftMouseUp());
+			//DebugLog("LB_PRESSED: ", Input::GetLeftMousePressed());
 		}
 
 	private:

@@ -11,8 +11,8 @@ namespace Cinnamon {
 		int health = 100;
 		Vector2 velocity;
 		double velScale = 2.;
-		Action<Player, void> OnDeath = Action<Player, void>(*this);
-		
+		Event<void> OnDeath;
+		const wchar_t* msg = L"Default Message";
 
 		inline Player() : GameObject() {
 			displayChar = L'O';	
@@ -21,10 +21,15 @@ namespace Cinnamon {
 		inline void Start() override {
 		}
 
+		inline void Shoot() {
+			DebugLog(msg);
+			health -= 10;
+		}
+
 		inline void Update() override {
-			if (health < 100) {
-				OnDeath();
+			if (health < 0) {
 			}
+
 			velocity = { 0, 0 };
 
 			if (Input::KeyDown('W')) {
@@ -43,13 +48,11 @@ namespace Cinnamon {
 				velocity += { 0, 1 };
 			}
 				
-			if (Input::KeyDown(VK_LBUTTON)) {
-				DebugLog("Left Mouse Down");
+						
+			if (Input::GetleftMouseDown()) {
+				Shoot();
 			}
 
-			if (Input::KeyDown(VK_RBUTTON)) {
-				DebugLog("Right Mouse Down");
-			}
 
 			position += velocity * Game::Instance().deltaTimeSeconds * velScale;
 
@@ -59,10 +62,7 @@ namespace Cinnamon {
 		}
 
 		inline void Log(int x) {
-			DebugLog("Player Position: ", position);
-			DebugLog("Delta Time: ", Game::Instance().deltaTimeSeconds);
-			DebugLog("Fixed Delta Time: ", Game::Instance().fixedDeltaTimeSeconds);
-			
+						
 		}
 	};
 

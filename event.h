@@ -4,33 +4,53 @@
 #include <utility>
 #include <Windows.h>
 
-namespace Cinnamon {	
-
-
+namespace Cinnamon {
 	template<typename Ret, typename...Args>
-	struct Action {
+	class Event {
 	public:
 		std::vector<Ret(*)(Args...)> Listeners;
-		
-		inline void operator +=(Ret(func)(Args...)) {
+		std::vector<std::function<Ret(Args...)>> MemListeners;
+
+		template<class ObjectType>
+		inline void operator +=(Ret(ObjectType::*func)(Args...)) {
 			Listeners.emplace_back(func);
 		}
 		
+		template<class ObjectType>
+		inline void AddMemFunc(ObjectType& obj, Ret(ObjectType::*func)(Args...)) {
+			std::function<Ret(Args...)> f = std::bind(func, &obj);
+			MemListeners.emplace_back(f);
+		}
+		
+		inline void operator +=(Ret(*func)(Args...)) {
+			Listeners.emplace_back(func);
+		}
+
 		inline void operator -=(Ret(func)(Args...)) {
 			Listeners.erase(std::remove(Listeners.begin(), Listeners.end(), func), Listeners.end());
 		}
 
+		template<class ObjectType>
+		inline void RemoveMemFunc(ObjectType& obj, Ret(ObjectType::* func)(Args...)) {
+			std::function<Ret(Args...)> f = std::bind(func, &obj);
+			MemListeners.erase(std::remove(MemListeners.begin(), MemListeners.end(), f), MemListeners.end());
+		}
+
 		inline void operator ()(Args...args) {
+			for (auto f : MemListeners) {
+				f(args...);
+			}
+
 			for (auto f : Listeners) {
 				f(args...);
 			}
 		}
-
 	};
 
 
 
-	template<class ObjectClass, typename Ret, typename...Args>
+	/*
+	template<typename Ret, typename...Args>
 	struct Action<ObjectClass, Ret, Args...> {
 	public:
 		typedef Ret(ObjectClass::*ObjectMemFunc)(Args...);
@@ -45,7 +65,7 @@ namespace Cinnamon {
 		inline void operator +=(ObjectMemFunc func) {
 			MemListeners.emplace_back(func);
 		}
-
+		
 		inline void operator +=(Ret(func)(Args...)) {
 			Listeners.emplace_back(func);
 		}
@@ -69,6 +89,6 @@ namespace Cinnamon {
 		}
 
 	};
-
+*/
 }
 

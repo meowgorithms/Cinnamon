@@ -5,7 +5,6 @@
 
 
 namespace Cinnamon {
-
 	class Level {
 	public:
 		std::vector<GameObject*> gameObjects = std::vector<GameObject*>();
