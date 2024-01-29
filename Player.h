@@ -47,8 +47,7 @@ namespace Cinnamon {
 			if (Input::KeyDown('S')) {
 				velocity += { 0, 1 };
 			}
-				
-						
+		
 			if (Input::GetleftMouseDown()) {
 				Shoot();
 			}

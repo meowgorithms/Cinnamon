@@ -13,7 +13,6 @@ namespace Cinnamon {
         inline static DWORD eventsRead;
         inline static INPUT_RECORD irec;
 
-
         inline static bool KeyDown(int KeyCode) {
             if (KeyCode == VK_LBUTTON) {
                 return leftMousePressed;
@@ -49,7 +48,6 @@ namespace Cinnamon {
 
             // Left mouse down
             if ((GetKeyState(VK_LBUTTON) & 0x8000) && !leftMousePressed) {
-                //DebugLog("Left Mouse Pressed Down");
                 leftMousePressed = true;
                 leftMouseDown = true;
                 leftMouseUp = false;
@@ -57,7 +55,6 @@ namespace Cinnamon {
             
             // Left mouse up
             if (!(GetKeyState(VK_LBUTTON) & 0x8000) && leftMousePressed) {
-                //DebugLog("Left Mouse Lifted");
                 leftMousePressed = false;
                 leftMouseDown = false;
                 leftMouseUp = true;
@@ -98,6 +95,13 @@ namespace Cinnamon {
             return rightMouseDown;
         }
 
+        inline static bool GetRightMousePressed() {
+            return rightMousePressed;
+        }
+
+        inline static bool GetRightMouseUp() {
+            return rightMouseUp;
+        }
 
     protected:
         inline static bool leftMouseDown = false;
